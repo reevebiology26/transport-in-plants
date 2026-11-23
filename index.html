@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR A-Level Biology: The Botanical Conservatory — Transport in Plants</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        botanical: ['"Cinzel Decorative"', 'serif'],
+                    },
+                    colors: {
+                        canopy: { 700: '#134e4a', 800: '#0f3d3a', 900: '#042f2e' },
+                        mist: { 100: '#f4f7f5', 200: '#e6ede9', 300: '#cddbd3' },
+                        amber: { 400: '#fbbf24', 500: '#d97706', 600: '#b45309' },
+                        orchid: { 600: '#be185d', 700: '#9d174d' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #f4f7f5; color: #1e293b; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #e6ede9; }
+        ::-webkit-scrollbar-thumb { background: #134e4a; border-radius: 5px; }
+        
+        /* Animations */
+        @keyframes leafDrift {
+            0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0.9; }
+            50% { transform: translateY(50vh) translateX(30px) rotate(180deg); opacity: 0.7; }
+            100% { transform: translateY(110vh) translateX(-20px) rotate(360deg); opacity: 0; }
+        }
+        @keyframes sproutBloom {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #34d399); }
+            50% { transform: scale(1.4) translateY(-8px); filter: drop-shadow(0 0 18px #10b981); }
+        }
+        @keyframes flashRed {
+            0%, 100% { filter: drop-shadow(0 0 0px #be185d) brightness(1); }
+            50% { filter: drop-shadow(0 0 25px #be185d) brightness(0.75) sepia(1) hue-rotate(-50deg) saturate(5); }
+        }
+        @keyframes branchShake {
+            0%, 100% { transform: translateX(0); filter: grayscale(0.5); }
+            25% { transform: translateX(-5px) rotate(-6deg); }
+            50% { transform: translateX(5px) rotate(6deg); }
+            75% { transform: translateX(-5px) rotate(-6deg); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-sprout-bloom { animation: sproutBloom 0.6s ease-out; }
+        .animate-flash-red { animation: flashRed 0.6s ease-in-out; }
+        .animate-shake { animation: branchShake 0.45s ease-in-out; }
+        .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+        
+        .conservatory-bg {
+            background-image: 
+                radial-gradient(circle at 50% 35%, rgba(251, 191, 36, 0.18) 0%, transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+                linear-gradient(to bottom, #0f3d3a, #042f2e);
+        }
+
+        /* Interactive Diagram Lab Tap to Place */
+        .drop-zone { transition: all 0.2s; border: 2px dashed #134e4a; min-height: 44px; cursor: pointer; }
+        .drop-zone:hover { background-color: #d1fae5; border-color: #059669; transform: scale(1.04); }
+        .tap-item { cursor: pointer; transition: transform 0.1s; }
+        .tap-item.selected { border-color: #be185d !important; background-color: #be185d !important; color: white !important; transform: scale(1.03); box-shadow: 0 0 12px rgba(190,24,93,0.45); }
+        .tap-item.correct { background-color: #059669 !important; color: white !important; border-color: #047857 !important; cursor: default; }
+        
+        .tab-btn { transition: all 0.3s; }
+        .tab-btn.active { border-bottom-width: 4px; border-color: #be185d; color: #be185d; background-color: #fdf2f8; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen overflow-hidden" id="main-body">
+
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 z-50 conservatory-bg flex flex-col items-center justify-center transition-opacity duration-1000 p-4">
+        <!-- CSS Falling Botanical Leaves -->
+        <div class="fixed inset-0 pointer-events-none opacity-40">
+            <div class="absolute text-emerald-300 text-2xl" style="left:12%; animation: leafDrift 11s linear infinite;">🌿</div>
+            <div class="absolute text-amber-300 text-3xl" style="left:28%; animation: leafDrift 14s linear infinite 2s;">🍃</div>
+            <div class="absolute text-emerald-200 text-xl" style="left:52%; animation: leafDrift 9s linear infinite 4s;">🌿</div>
+            <div class="absolute text-teal-300 text-3xl" style="left:74%; animation: leafDrift 15s linear infinite 1s;">🍃</div>
+            <div class="absolute text-emerald-300 text-2xl" style="left:88%; animation: leafDrift 12s linear infinite 3s;">🌿</div>
+        </div>
+        
+        <div class="relative z-10 text-center flex flex-col items-center max-w-3xl bg-canopy-900/85 p-8 sm:p-10 rounded-3xl border-4 border-amber-400 shadow-[0_0_50px_rgba(251,191,36,0.28)] backdrop-blur-md">
+            <i class="ph-fill ph-plant text-6xl text-emerald-400 mb-2 animate-pulse"></i>
+            <h2 class="text-amber-400 font-bold tracking-widest uppercase text-sm mb-2">OCR A A-Level Biology • Module 3.1.3</h2>
+            <h1 class="font-botanical text-4xl md:text-6xl text-white mb-4 leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">The Botanical<br>Conservatory</h1>
+            <p class="text-amber-400 font-bold tracking-widest uppercase text-sm mb-6 bg-canopy-800/90 px-5 py-1.5 rounded-full border border-amber-500/50 shadow-inner">Created by Mr Reeve</p>
+            <p class="text-mist-200 font-medium mb-8 text-base sm:text-lg max-w-xl">Master xylem & phloem histology, cohesion-tension, active sucrose loading, potometers, and xerophyte adaptations.</p>
+            
+            <button onclick="enterApp()" class="bg-orchid-600 hover:bg-orchid-700 text-white font-bold text-xl py-4 px-10 rounded-full shadow-[0_0_24px_rgba(190,24,93,0.6)] transition-all transform hover:scale-110 hover:-translate-y-1 flex items-center gap-3 border-2 border-orchid-700">
+                <i class="ph-bold ph-play"></i> Enter Conservatory
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="bg-white shadow-md z-40 sticky top-0 border-b border-mist-300 hidden" id="app-header">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-canopy-800 p-2 rounded-lg text-amber-400 shadow-inner"><i class="ph-fill ph-plant text-2xl"></i></div>
+                <div>
+                    <h1 class="font-bold text-xl text-canopy-900 leading-tight">Topic 9: Transport in Plants</h1>
+                    <p class="text-orchid-600 text-xs font-bold uppercase tracking-wider">OCR A Specification (3.1.3)</p>
+                </div>
+            </div>
+            
+            <!-- Gamified Streak -->
+            <div id="streak-container" class="bg-mist-100 border border-mist-300 px-4 py-1.5 rounded-full flex items-center gap-3 shadow-sm transition-colors duration-300">
+                <span id="streak-icon" class="text-3xl drop-shadow-md transition-transform duration-200">🌱</span>
+                <span class="text-sm font-bold text-canopy-800 uppercase">Streak: <span id="streak-counter" class="text-xl text-orchid-600 font-black ml-1">0</span></span>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex overflow-x-auto bg-mist-100 scrollbar-hide border-t border-mist-200 shadow-inner">
+            <div class="max-w-7xl mx-auto w-full flex">
+                <button onclick="switchTab('match')" id="nav-match" class="tab-btn active flex items-center gap-2 px-6 py-4 font-bold text-sm whitespace-nowrap"><i class="ph-bold ph-arrows-merge text-lg"></i> Mix & Match</button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="tab-btn flex items-center gap-2 px-6 py-4 font-bold text-sm whitespace-nowrap text-canopy-700 hover:bg-mist-200"><i class="ph-bold ph-list-checks text-lg"></i> Knowledge Quiz</button>
+                <button onclick="switchTab('long')" id="nav-long" class="tab-btn flex items-center gap-2 px-6 py-4 font-bold text-sm whitespace-nowrap text-canopy-700 hover:bg-mist-200"><i class="ph-bold ph-pen-nib text-lg"></i> 6-Mark Questions</button>
+                <button onclick="switchTab('graph')" id="nav-graph" class="tab-btn flex items-center gap-2 px-6 py-4 font-bold text-sm whitespace-nowrap text-canopy-700 hover:bg-mist-200"><i class="ph-bold ph-tree-structure text-lg"></i> Vascular & Pathway Lab</button>
+                <button onclick="switchTab('resources')" id="nav-resources" class="tab-btn flex items-center gap-2 px-6 py-4 font-bold text-sm whitespace-nowrap text-canopy-700 hover:bg-mist-200"><i class="ph-bold ph-video-camera text-lg"></i> Exam Prep & PAGs</button>
+                <button onclick="switchTab('dash')" id="nav-dash" class="tab-btn flex items-center gap-2 px-6 py-4 font-bold text-sm whitespace-nowrap text-canopy-700 hover:bg-mist-200"><i class="ph-bold ph-chart-polar text-lg"></i> Dashboard</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-6xl mx-auto w-full p-4 sm:p-6 pb-24 hidden relative" id="main-content">
+        
+        <!-- Tab 1: Mix & Match -->
+        <div id="tab-match" class="tab-content active animate-slide-in">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-mist-300">
+                <div class="mb-6 flex justify-between items-center border-b border-mist-200 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-canopy-800 flex items-center gap-2"><i class="ph-fill ph-arrows-merge text-orchid-600"></i> Botanical Terminology</h2>
+                        <p class="text-gray-500 text-sm mt-1">Match the exact OCR A-Level 3.1.3 terms to their specification definitions. (Round <span id="match-round" class="font-bold text-canopy-800">1</span> of 3)</p>
+                    </div>
+                    <div class="font-bold text-canopy-800 bg-mist-200 px-4 py-2 rounded-lg">Score: <span id="match-score" class="text-orchid-600">0</span> / 18</div>
+                </div>
+                
+                <div id="match-complete" class="hidden text-center py-10 bg-emerald-50 border border-emerald-500 rounded-xl text-emerald-800">
+                    <i class="ph-fill ph-check-circle text-6xl mb-2 text-emerald-600"></i>
+                    <h3 class="text-2xl font-bold">Plant Transport Terminology Mastered!</h3>
+                </div>
+
+                <div id="match-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3" id="match-col-q"></div>
+                    <div class="space-y-3" id="match-col-a"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Quiz -->
+        <div id="tab-quiz" class="tab-content animate-slide-in">
+            <div class="max-w-3xl mx-auto bg-canopy-900 p-6 sm:p-8 rounded-2xl shadow-xl text-white border-2 border-amber-500">
+                <div class="mb-6 flex justify-between items-end border-b border-canopy-700 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold flex items-center gap-2 text-amber-400"><i class="ph-fill ph-list-checks"></i> Specification Mastery Quiz</h2>
+                        <p class="text-mist-300 text-sm mt-1">Incorrect answers automatically return to the queue until 30/30 mastery is achieved.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-amber-500 font-bold uppercase tracking-wider">Mastered</div>
+                        <div class="text-3xl font-black text-white" id="quiz-progress">0 / 30</div>
+                    </div>
+                </div>
+                
+                <div id="quiz-complete" class="hidden text-center py-10">
+                    <i class="ph-fill ph-star text-7xl text-amber-400 mb-4 animate-bounce"></i>
+                    <h3 class="text-3xl font-bold mb-2">100% Botanical Mastery</h3>
+                    <p class="text-mist-300">You conquered every 3.1.3 Transport in Plants mark-scheme trap.</p>
+                </div>
+
+                <div id="quiz-container">
+                    <h3 class="text-xl font-medium mb-8 leading-relaxed" id="quiz-question">Loading...</h3>
+                    <div class="space-y-3" id="quiz-options"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: 6-Mark Qs -->
+        <div id="tab-long" class="tab-content animate-slide-in">
+            <div class="mb-6 border-b border-mist-300 pb-4">
+                <h2 class="text-2xl font-bold text-canopy-800 flex items-center gap-2"><i class="ph-fill ph-pen-nib text-orchid-600"></i> Extended Response (6-Mark Questions)</h2>
+                <p class="text-gray-500 text-sm mt-1">Write full OCR A exam answers, then self-assess against leveled Low, Medium, and High mark schemes.</p>
+            </div>
+            <div id="long-list" class="space-y-8"></div>
+        </div>
+
+        <!-- Tab 4: Vascular & Pathway Lab (10 Marks) -->
+        <div id="tab-graph" class="tab-content animate-slide-in">
+            <div class="mb-6 border-b border-mist-300 pb-4 flex justify-between items-end">
+                <div>
+                    <h2 class="text-2xl font-bold text-canopy-800 flex items-center gap-2"><i class="ph-fill ph-tree-structure text-amber-500"></i> Vascular & Pathway Lab</h2>
+                    <p class="text-gray-500 text-sm mt-1">Tap a label from the specimen bank, then tap the matching drop zone on the botanical diagram. (10 labels total)</p>
+                </div>
+                <div class="font-bold text-canopy-800 bg-mist-200 px-4 py-2 rounded-lg">Score: <span id="graph-score" class="text-orchid-600">0</span> / 10</div>
+            </div>
+            
+            <div id="graph-container" class="space-y-8 relative">
+                <!-- Slide 1: Dicot Root & Stem Vascular Distribution (PAG 1) -->
+                <div id="graph-slide-0" class="graph-slide block">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-mist-300">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                            <h3 class="font-bold text-lg text-canopy-900">Diagram 1 of 2: Herbaceous Dicot Root & Stem Histology (PAG 1)</h3>
+                            <button onclick="nextGraph(1)" class="bg-canopy-800 hover:bg-canopy-900 text-white px-4 py-2 rounded shadow text-sm font-bold transition-colors">Next Diagram <i class="ph-bold ph-arrow-right"></i></button>
+                        </div>
+                        <div class="flex flex-col lg:flex-row gap-6">
+                            <div class="flex-1 bg-mist-100 rounded-xl p-4 border border-mist-200 relative h-[26rem] flex flex-col justify-between overflow-hidden">
+                                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet">
+                                    <!-- Left: Dicot Root TS -->
+                                    <text x="50" y="10" text-anchor="middle" font-size="6" font-weight="bold" fill="#042f2e">DICOT ROOT (T.S.)</text>
+                                    <circle cx="50" cy="62" r="42" fill="#ecfdf5" stroke="#134e4a" stroke-width="1.5"/>
+                                    <!-- Endodermis ring -->
+                                    <circle cx="50" cy="62" r="20" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" stroke-dasharray="2,1"/>
+                                    <!-- Central X-shaped Xylem -->
+                                    <path d="M 42 54 L 58 70 M 58 54 L 42 70" stroke="#be185d" stroke-width="4.5" stroke-linecap="round"/>
+                                    <!-- Phloem pockets between xylem arms -->
+                                    <circle cx="50" cy="51" r="2.8" fill="#0284c7"/>
+                                    <circle cx="50" cy="73" r="2.8" fill="#0284c7"/>
+                                    <circle cx="39" cy="62" r="2.8" fill="#0284c7"/>
+                                    <circle cx="61" cy="62" r="2.8" fill="#0284c7"/>
+                                    <!-- Pointers Root -->
+                                    <line x1="50" y1="62" x2="22" y2="30" stroke="#be185d" stroke-width="0.8"/>
+                                    <line x1="69" y1="54" x2="82" y2="28" stroke="#d97706" stroke-width="0.8"/>
+
+                                    <!-- Divider -->
+                                    <line x1="100" y1="12" x2="100" y2="112" stroke="#cddbd3" stroke-width="1" stroke-dasharray="3"/>
+
+                                    <!-- Right: Dicot Stem TS -->
+                                    <text x="150" y="10" text-anchor="middle" font-size="6" font-weight="bold" fill="#042f2e">DICOT STEM (T.S.)</text>
+                                    <circle cx="150" cy="62" r="42" fill="#ecfdf5" stroke="#134e4a" stroke-width="1.5"/>
+                                    <!-- Ring of Vascular Bundles -->
+                                    <g transform="translate(150,62)">
+                                        <!-- Top bundle -->
+                                        <path d="M -5 -26 L 5 -26 L 3 -18 L -3 -18 Z" fill="#be185d"/>
+                                        <path d="M -6 -32 L 6 -32 L 5 -27 L -5 -27 Z" fill="#0284c7"/>
+                                        <line x1="-5.5" y1="-26.5" x2="5.5" y2="-26.5" stroke="#fbbf24" stroke-width="1.2"/>
+                                        <!-- Bottom bundle -->
+                                        <path d="M -5 26 L 5 26 L 3 18 L -3 18 Z" fill="#be185d"/>
+                                        <path d="M -6 32 L 6 32 L 5 27 L -5 27 Z" fill="#0284c7"/>
+                                        <line x1="-5.5" y1="26.5" x2="5.5" y2="26.5" stroke="#fbbf24" stroke-width="1.2"/>
+                                        <!-- Left bundle -->
+                                        <path d="M -26 -5 L -26 5 L -18 3 L -18 -3 Z" fill="#be185d"/>
+                                        <path d="M -32 -6 L -32 6 L -27 5 L -27 -5 Z" fill="#0284c7"/>
+                                        <line x1="-26.5" y1="-5.5" x2="-26.5" y2="5.5" stroke="#fbbf24" stroke-width="1.2"/>
+                                        <!-- Right bundle -->
+                                        <path d="M 26 -5 L 26 5 L 18 3 L 18 -3 Z" fill="#be185d"/>
+                                        <path d="M 32 -6 L 32 6 L 27 5 L 27 -5 Z" fill="#0284c7"/>
+                                        <line x1="26.5" y1="-5.5" x2="26.5" y2="5.5" stroke="#fbbf24" stroke-width="1.2"/>
+                                    </g>
+                                    <!-- Pointers Stem -->
+                                    <line x1="150" y1="31" x2="122" y2="22" stroke="#0284c7" stroke-width="0.8"/>
+                                    <line x1="155" y1="35.5" x2="178" y2="26" stroke="#d97706" stroke-width="0.8"/>
+                                    <line x1="150" y1="42" x2="175" y2="88" stroke="#be185d" stroke-width="0.8"/>
+                                </svg>
+                                
+                                <!-- Drop Zones Diagram 1 -->
+                                <div class="absolute top-[14%] left-[2%] drop-zone w-28 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(1, this)">Drop 1 (Root Centre)</div>
+                                <div class="absolute top-[14%] left-[31%] drop-zone w-28 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(2, this)">Drop 2 (Root Ring)</div>
+                                <div class="absolute top-[12%] right-[28%] drop-zone w-28 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(3, this)">Drop 3 (Outer Bundle)</div>
+                                <div class="absolute top-[15%] right-[2%] drop-zone w-28 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(4, this)">Drop 4 (Middle Layer)</div>
+                                <div class="absolute bottom-[8%] right-[4%] drop-zone w-28 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(5, this)">Drop 5 (Inner Bundle)</div>
+                            </div>
+                            <div class="w-full lg:w-1/3 flex flex-col gap-2" id="drag-bank-1">
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(3, this)">Phloem (outer face of stem vascular bundle)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(1, this)">Central X-shaped Xylem (withstands tugging forces)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(5, this)">Xylem (inner face of stem vascular bundle)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(2, this)">Endodermis containing waterproof Casparian strip</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(4, this)">Cambium (meristematic tissue producing new vascular cells)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Root Cortex Water Pathways & Translocation -->
+                <div id="graph-slide-1" class="graph-slide hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-mist-300">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                            <h3 class="font-bold text-lg text-canopy-900">Diagram 2 of 2: Root Water Pathways & Active Phloem Loading</h3>
+                            <div>
+                                <button onclick="nextGraph(0)" class="bg-mist-200 hover:bg-mist-300 text-canopy-800 px-4 py-2 rounded shadow text-sm font-bold transition-colors mr-2"><i class="ph-bold ph-arrow-left"></i> Back</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col lg:flex-row gap-6">
+                            <div class="flex-1 bg-mist-100 rounded-xl p-4 border border-mist-200 relative h-[26rem] flex flex-col justify-between overflow-hidden">
+                                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet">
+                                    <!-- Top Half: Root Cortex Pathways -->
+                                    <text x="100" y="9" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#042f2e">ROOT HAIR → CORTEX → ENDODERMIS → XYLEM</text>
+                                    <!-- Root hair & cortex cells -->
+                                    <path d="M 8 34 L 24 34 L 24 22 L 54 22 L 54 52 L 24 52 L 24 40 L 8 40 Z" fill="#d1fae5" stroke="#065f46" stroke-width="1.2"/>
+                                    <rect x="54" y="22" width="32" height="30" fill="#d1fae5" stroke="#065f46" stroke-width="1.2"/>
+                                    <rect x="86" y="22" width="32" height="30" fill="#fef3c7" stroke="#b45309" stroke-width="1.4"/>
+                                    <!-- Casparian Strip block in cell wall -->
+                                    <rect x="100" y="21" width="4" height="7" fill="#be185d"/>
+                                    <rect x="100" y="46" width="4" height="7" fill="#be185d"/>
+                                    <!-- Xylem Vessel -->
+                                    <rect x="118" y="22" width="24" height="30" fill="#fee2e2" stroke="#991b1b" stroke-width="1.5"/>
+                                    <text x="130" y="39" text-anchor="middle" font-size="5" font-weight="bold" fill="#991b1b">XYLEM</text>
+                                    <!-- Symplast path (blue through cytoplasm) -->
+                                    <path d="M 14 37 L 122 37" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="2,1"/>
+                                    <!-- Apoplast path (red through top cell wall, diverted at Casparian strip) -->
+                                    <path d="M 26 23 L 98 23 L 98 37" stroke="#be185d" stroke-width="1.5"/>
+
+                                    <!-- Divider -->
+                                    <line x1="10" y1="60" x2="190" y2="60" stroke="#cddbd3" stroke-width="1" stroke-dasharray="3"/>
+
+                                    <!-- Bottom Half: Active Loading at Source -->
+                                    <text x="100" y="69" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#042f2e">ACTIVE LOADING AT SOURCE (LEAF)</text>
+                                    <rect x="35" y="75" width="45" height="36" rx="3" fill="#e0f2fe" stroke="#0369a1" stroke-width="1.2"/>
+                                    <text x="57" y="83" text-anchor="middle" font-size="4.8" font-weight="bold" fill="#0369a1">COMPANION CELL</text>
+                                    <rect x="92" y="75" width="48" height="36" rx="3" fill="#dcfce7" stroke="#15803d" stroke-width="1.2"/>
+                                    <text x="116" y="83" text-anchor="middle" font-size="4.8" font-weight="bold" fill="#15803d">SIEVE TUBE ELEMENT</text>
+                                    <!-- H+ pump & co-transporter -->
+                                    <circle cx="35" cy="90" r="3" fill="#d97706"/>
+                                    <circle cx="35" cy="102" r="3" fill="#be185d"/>
+                                    <!-- Plasmodesmata bridge -->
+                                    <rect x="80" y="92" width="12" height="5" fill="#fbbf24" stroke="#b45309" stroke-width="0.8"/>
+                                </svg>
+                                
+                                <!-- Drop Zones Diagram 2 -->
+                                <div class="absolute top-[14%] left-[14%] drop-zone w-32 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(6, this)">Drop 6 (Cell Wall Route)</div>
+                                <div class="absolute top-[33%] left-[24%] drop-zone w-32 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(7, this)">Drop 7 (Cytoplasm Route)</div>
+                                <div class="absolute top-[13%] right-[4%] drop-zone w-32 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(8, this)">Drop 8 (Suberin Barrier)</div>
+                                <div class="absolute bottom-[6%] left-[2%] drop-zone w-32 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(9, this)">Drop 9 (Membrane Proteins)</div>
+                                <div class="absolute bottom-[6%] right-[3%] drop-zone w-32 bg-white/95 p-1 text-[10px] text-center flex items-center justify-center font-bold text-canopy-800 rounded shadow-sm" onclick="handleZoneClick(10, this)">Drop 10 (Cell Junctions)</div>
+                            </div>
+                            <div class="w-full lg:w-1/3 flex flex-col gap-2" id="drag-bank-2">
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(8, this)">Casparian strip (forces water into symplast)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(6, this)">Apoplast pathway (through cellulose cell walls)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(10, this)">Plasmodesmata (sucrose diffuses into sieve tube)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(7, this)">Symplast pathway (cytoplasm via plasmodesmata)</div>
+                                <div class="tap-item bg-canopy-800 text-white p-2.5 rounded shadow text-xs font-medium border border-canopy-900" onclick="handleLabelClick(9, this)">Proton (H+) pump & H+/sucrose co-transporter</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Resources & PAGs -->
+        <div id="tab-resources" class="tab-content animate-slide-in">
+            <div class="mb-6 border-b border-mist-300 pb-4">
+                <h2 class="text-2xl font-bold text-canopy-800 flex items-center gap-2"><i class="ph-fill ph-video-camera text-orchid-600"></i> Exam Prep & Required Practicals (PAG 1, 2 & 5)</h2>
+                <p id="resources-intro" class="text-gray-500 text-sm mt-1">Complete your action plan (+3 bonus marks per valid action) to unlock external OCR A links and PAG guides.</p>
+            </div>
+            
+            <div id="action-plan-section" class="bg-white p-6 rounded-2xl shadow-sm border border-mist-300 mb-6">
+                <h3 class="text-xl font-bold text-canopy-900 mb-4">Identify how you could improve your score:</h3>
+                <p class="text-sm text-gray-500 mb-6">Select your next steps.</p>
+                
+                <div class="space-y-4 mb-6">
+                    <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="chk-pastPapers" onchange="toggleAction('pastPapers')" class="w-5 h-5 text-canopy-600 rounded border-gray-300"> <span class="font-medium text-gray-800">Past paper questions (OCR A Module 3.1.3)</span></label>
+                    
+                    <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="chk-rewatchPAGs" onchange="toggleAction('rewatchPAGs')" class="w-5 h-5 text-canopy-600 rounded border-gray-300"> <span class="font-medium text-gray-800">Rewatching required practicals (PAG 1 Microscopy, PAG 2 Dissection, PAG 5 Potometer)</span></label>
+                    
+                    <div>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="chk-flashcards" onchange="toggleAction('flashcards')" class="w-5 h-5 text-canopy-600 rounded border-gray-300"> <span class="font-medium text-gray-800">Flash cards based on long answer questions</span></label>
+                        <div id="input-flashcards" class="hidden ml-8 mt-2"><input type="text" id="val-flashcards" placeholder="Which 6-mark topic was weakest? (e.g. Active loading / Cohesion-tension)" class="w-full sm:w-2/3 p-2 border border-mist-300 rounded outline-none focus:border-canopy-500 text-sm"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="chk-glossary" onchange="toggleAction('glossary')" class="w-5 h-5 text-canopy-600 rounded border-gray-300"> <span class="font-medium text-gray-800">Writing down a glossary of key words and definitions</span></label>
+                        <div id="input-glossary" class="hidden ml-8 mt-2"><input type="text" id="val-glossary" placeholder="Name 3 words you have struggled with..." class="w-full sm:w-2/3 p-2 border border-mist-300 rounded outline-none focus:border-canopy-500 text-sm"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="chk-copyWork" onchange="toggleAction('copyWork')" class="w-5 h-5 text-canopy-600 rounded border-gray-300"> <span class="font-medium text-gray-800">Copying up missed work</span></label>
+                        <div id="input-copyWork" class="hidden ml-8 mt-2 flex gap-2">
+                            <input type="text" id="val-copyWho" placeholder="Who will you copy from?" class="w-full sm:w-1/3 p-2 border border-mist-300 rounded outline-none focus:border-canopy-500 text-sm">
+                            <input type="date" id="val-copyDate" class="w-full sm:w-1/3 p-2 border border-mist-300 rounded outline-none focus:border-canopy-500 text-sm text-gray-600">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="chk-seeTeacher" onchange="toggleAction('seeTeacher')" class="w-5 h-5 text-canopy-600 rounded border-gray-300"> <span class="font-medium text-gray-800">Approaching my teacher independently for help</span></label>
+                        <div id="input-seeTeacher" class="hidden ml-8 mt-2"><input type="date" id="val-seeTeacher" class="w-full sm:w-1/3 p-2 border border-mist-300 rounded outline-none focus:border-canopy-500 text-sm text-gray-600"></div>
+                    </div>
+                    
+                    <label class="flex items-center gap-3 cursor-pointer mt-4 pt-4 border-t border-mist-200"><input type="checkbox" id="chk-none" onchange="toggleAction('none')" class="w-5 h-5 text-orchid-600 rounded border-gray-300"> <span class="font-bold text-gray-500">None of the above</span></label>
+                </div>
+                
+                <button onclick="submitActionPlan()" class="bg-canopy-700 hover:bg-canopy-800 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">Submit Action Plan & Reveal Resources <i class="ph-bold ph-lock-open"></i></button>
+            </div>
+            
+            <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- PMT -->
+                <a href="https://www.physicsandmathstutor.com/biology-revision/a-level-ocr-a/module-3/" target="_blank" class="bg-white p-6 rounded-2xl border-2 border-mist-300 hover:border-canopy-600 transition-colors group shadow-sm flex flex-col items-center text-center">
+                    <div class="bg-emerald-100 p-4 rounded-full mb-4 text-canopy-700 group-hover:scale-110 transition-transform"><i class="ph-fill ph-exam text-4xl"></i></div>
+                    <h3 class="font-bold text-xl mb-2 text-canopy-900">Physics & Maths Tutor</h3>
+                    <p class="text-sm text-gray-500 mb-4">Access official OCR A Module 3.1.3 past paper questions and mark schemes for Transport in Plants.</p>
+                    <span class="text-canopy-700 font-bold text-sm uppercase tracking-wider flex items-center gap-1 mt-auto">Open Resource <i class="ph-bold ph-arrow-up-right"></i></span>
+                </a>
+
+                <!-- Bozeman -->
+                <a href="https://www.youtube.com/watch?v=bsY8j8f54I0" target="_blank" class="bg-white p-6 rounded-2xl border-2 border-mist-300 hover:border-orchid-600 transition-colors group shadow-sm flex flex-col items-center text-center">
+                    <div class="bg-pink-100 p-4 rounded-full mb-4 text-orchid-600 group-hover:scale-110 transition-transform"><i class="ph-fill ph-youtube-logo text-4xl"></i></div>
+                    <h3 class="font-bold text-xl mb-2 text-canopy-900">Bozeman Science</h3>
+                    <p class="text-sm text-gray-500 mb-4">Clear visual walkthrough of water potential, xylem cohesion-tension, and phloem pressure flow.</p>
+                    <span class="text-orchid-600 font-bold text-sm uppercase tracking-wider flex items-center gap-1 mt-auto">Watch Video <i class="ph-bold ph-arrow-up-right"></i></span>
+                </a>
+
+                <!-- Free Science Lessons -->
+                <a href="https://www.youtube.com/results?search_query=freesciencelessons+a+level+biology+transport+in+plants" target="_blank" class="bg-white p-6 rounded-2xl border-2 border-mist-300 hover:border-amber-500 transition-colors group shadow-sm flex flex-col items-center text-center">
+                    <div class="bg-amber-100 p-4 rounded-full mb-4 text-amber-600 group-hover:scale-110 transition-transform"><i class="ph-fill ph-video text-4xl"></i></div>
+                    <h3 class="font-bold text-xl mb-2 text-canopy-900">FSL: Plant Transport</h3>
+                    <p class="text-sm text-gray-500 mb-4">Concise A-Level videos covering xylem, phloem, potometers, and translocation mechanisms.</p>
+                    <span class="text-amber-600 font-bold text-sm uppercase tracking-wider flex items-center gap-1 mt-auto">Watch Videos <i class="ph-bold ph-arrow-up-right"></i></span>
+                </a>
+
+                <!-- PAG 5 Video -->
+                <a href="https://www.youtube.com/results?search_query=potometer+required+practical+a+level+biology" target="_blank" class="bg-white p-6 rounded-2xl border-2 border-mist-300 hover:border-blue-500 transition-colors group shadow-sm flex flex-col items-center text-center">
+                    <div class="bg-blue-100 p-4 rounded-full mb-4 text-blue-600 group-hover:scale-110 transition-transform"><i class="ph-fill ph-play-circle text-4xl"></i></div>
+                    <h3 class="font-bold text-xl mb-2 text-canopy-900">PAG 5: Potometer Demo</h3>
+                    <p class="text-sm text-gray-500 mb-4">Practical demonstration of setting up a potometer underwater and calculating water uptake rate.</p>
+                    <span class="text-blue-600 font-bold text-sm uppercase tracking-wider flex items-center gap-1 mt-auto">Watch Demo <i class="ph-bold ph-arrow-up-right"></i></span>
+                </a>
+
+                <!-- PAG 5 Reminder Modal -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-mist-300 hover:border-blue-500 transition-colors group shadow-sm flex flex-col items-center text-center">
+                    <div class="bg-blue-100 p-4 rounded-full mb-4 text-blue-600 group-hover:scale-110 transition-transform"><i class="ph-fill ph-drop text-4xl"></i></div>
+                    <h3 class="font-bold text-xl mb-2 text-canopy-900">PAG 5 Reminder:<br>Potometer</h3>
+                    <p class="text-sm text-gray-500 mb-4">Review variables, underwater assembly precautions, and $\pi r^2 l$ rate calculations.</p>
+                    <button onclick="document.getElementById('pag-potometer-modal').classList.remove('hidden')" class="mt-auto text-white bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-1 w-full"><i class="ph-bold ph-book-open"></i> Read Instructions</button>
+                </div>
+
+                <!-- PAG 1 & 2 Reminder Modal -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-mist-300 hover:border-purple-500 transition-colors group shadow-sm flex flex-col items-center text-center">
+                    <div class="bg-purple-100 p-4 rounded-full mb-4 text-purple-600 group-hover:scale-110 transition-transform"><i class="ph-fill ph-microscope text-4xl"></i></div>
+                    <h3 class="font-bold text-xl mb-2 text-canopy-900">PAG 1 & 2 Reminder:<br>Staining & Dissection</h3>
+                    <p class="text-sm text-gray-500 mb-4">Review stained TS sections (PAG 1) and stem dissection/staining with toluidine blue (PAG 2).</p>
+                    <button onclick="document.getElementById('pag-dissection-modal').classList.remove('hidden')" class="mt-auto text-white bg-purple-600 hover:bg-purple-700 py-2 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-1 w-full"><i class="ph-bold ph-book-open"></i> Read Instructions</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 6: Dashboard -->
+        <div id="tab-dash" class="tab-content animate-slide-in">
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-3xl shadow-xl border border-mist-300 relative overflow-hidden">
+                <i class="ph-fill ph-plant text-[15rem] absolute -top-10 -right-10 text-mist-200 opacity-50 pointer-events-none"></i>
+                
+                <h2 class="text-3xl font-bold text-canopy-900 mb-8 border-b border-mist-200 pb-4 relative z-10">Conservatory Mastery Dashboard</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 relative z-10">
+                    <div class="bg-mist-100 p-5 rounded-xl border border-mist-200">
+                        <div class="text-sm font-bold text-gray-500 uppercase flex items-center gap-2 mb-2"><i class="ph-fill ph-arrows-merge text-orchid-600 text-lg"></i> Mix & Match</div>
+                        <div class="text-3xl font-black text-canopy-900"><span id="dash-match">0</span> <span class="text-xl text-gray-400 font-medium">/ 18</span></div>
+                    </div>
+                    <div class="bg-mist-100 p-5 rounded-xl border border-mist-200">
+                        <div class="text-sm font-bold text-gray-500 uppercase flex items-center gap-2 mb-2"><i class="ph-fill ph-list-checks text-amber-500 text-lg"></i> Knowledge Quiz</div>
+                        <div class="text-3xl font-black text-canopy-900"><span id="dash-quiz">0</span> <span class="text-xl text-gray-400 font-medium">/ 30</span></div>
+                    </div>
+                    <div class="bg-mist-100 p-5 rounded-xl border border-mist-200">
+                        <div class="text-sm font-bold text-gray-500 uppercase flex items-center gap-2 mb-2"><i class="ph-fill ph-pen-nib text-canopy-600 text-lg"></i> 6-Mark Questions</div>
+                        <div class="text-3xl font-black text-canopy-900"><span id="dash-long">0</span> <span class="text-xl text-gray-400 font-medium">/ 36</span></div>
+                    </div>
+                    <div class="bg-mist-100 p-5 rounded-xl border border-mist-200">
+                        <div class="text-sm font-bold text-gray-500 uppercase flex items-center gap-2 mb-2"><i class="ph-fill ph-tree-structure text-blue-500 text-lg"></i> Vascular & Pathway Lab</div>
+                        <div class="text-3xl font-black text-canopy-900"><span id="dash-graph">0</span> <span class="text-xl text-gray-400 font-medium">/ 10</span></div>
+                    </div>
+                </div>
+
+                <button onclick="openNameModal()" class="w-full bg-canopy-700 hover:bg-canopy-800 text-white font-bold uppercase tracking-widest py-4 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 text-lg flex justify-center items-center gap-3 relative z-10 border border-canopy-900">
+                    <i class="ph-bold ph-printer text-2xl"></i> Generate Mark Report
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modals -->
+    <div id="name-modal" class="fixed inset-0 bg-canopy-900/80 z-[60] hidden items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl max-w-sm w-full shadow-2xl relative border-t-8 border-orchid-600 animate-slide-in text-center">
+            <i class="ph-fill ph-student text-5xl text-canopy-800 mb-2"></i>
+            <h2 class="text-2xl font-bold text-canopy-900 mb-2">Student Verification</h2>
+            <p class="text-gray-500 font-medium mb-6 text-sm">Enter your name for your official screenshot report.</p>
+            <input type="text" id="student-name-input" class="w-full p-3 border-2 rounded-xl outline-none transition-colors border-mist-300 focus:border-orchid-600 mb-6 bg-mist-100 text-center font-bold text-lg text-canopy-900" placeholder="Your Name">
+            <button onclick="generateScorecard()" class="w-full py-3 bg-orchid-600 hover:bg-orchid-700 text-white rounded-xl transition-colors font-bold shadow-md">Generate Report</button>
+            <button onclick="closeModals()" class="mt-3 text-sm text-gray-400 hover:text-gray-600 font-medium">Cancel</button>
+        </div>
+    </div>
+
+    <div id="scorecard-modal" class="fixed inset-0 bg-canopy-900/90 z-[60] hidden items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-[0_0_50px_rgba(190,24,93,0.3)] relative border-4 border-amber-400 max-h-[95vh] overflow-y-auto animate-slide-in">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-gray-400 hover:text-orchid-600 transition-colors"><i class="ph-fill ph-x-circle text-3xl"></i></button>
+            
+            <div class="text-center mb-6">
+                <div class="animate-sprout-bloom inline-block mb-2 text-5xl">🌿</div>
+                <h2 class="font-botanical text-3xl font-bold text-canopy-900 leading-tight">Botanical Conservatory<br>Report</h2>
+                <p class="text-orchid-600 font-bold mt-2 uppercase tracking-widest text-xs">OCR A A-Level Biology • Topic 9 (3.1.3)</p>
+            </div>
+            
+            <div class="bg-mist-100 p-5 rounded-xl border border-mist-300 mb-6">
+                <div class="flex justify-between border-b border-mist-300 pb-3 mb-3">
+                    <span class="text-gray-500 font-bold uppercase tracking-wider text-xs">Student</span>
+                    <span class="font-bold text-canopy-900" id="sc-name"></span>
+                </div>
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600 font-medium">Mix & Match</span>
+                        <span class="font-bold text-canopy-900"><span id="sc-match">0</span> <span class="text-gray-400">/ 18</span></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600 font-medium">Knowledge Quiz</span>
+                        <span class="font-bold text-canopy-900"><span id="sc-quiz">0</span> <span class="text-gray-400">/ 30</span></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600 font-medium">Vascular & Pathway Lab</span>
+                        <span class="font-bold text-canopy-900"><span id="sc-graph">0</span> <span class="text-gray-400">/ 10</span></span>
+                    </div>
+                    <div class="flex justify-between text-sm border-b border-mist-300 pb-3">
+                        <span class="text-gray-600 font-medium">6-Mark Questions</span>
+                        <span class="font-bold text-canopy-900"><span id="sc-long">0</span> <span class="text-gray-400">/ 36</span></span>
+                    </div>
+                
+                    <!-- Action Plan Breakdown -->
+                    <div class="flex flex-col pt-3 border-b border-mist-300 pb-3">
+                        <div class="flex justify-between items-center text-sm mb-2">
+                            <span class="text-canopy-700 font-bold">Action Plan:</span>
+                            <span class="font-bold text-orchid-600 bg-pink-50 px-2 py-0.5 rounded text-xs border border-pink-100 hidden" id="sc-bonus-container">+<span id="sc-bonus">0</span> Bonus</span>
+                        </div>
+                        <div id="sc-action-list" class="text-xs text-gray-600 space-y-1 bg-white p-2 rounded border border-mist-200 max-h-24 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-4 text-lg items-center">
+                    <span class="font-bold text-canopy-900 uppercase">Total Score:</span>
+                    <div class="text-right">
+                        <div class="font-black text-orchid-600 text-3xl"><span id="sc-total">0</span> <span class="text-lg text-gray-400">/ 100</span></div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-1"><span id="sc-percent">0</span>% Mastery</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center text-xs text-gray-400 font-medium">
+                <p class="font-bold text-orchid-600 mb-1">Thank you for locking in to Transport in Plants revision.</p>
+                <p>Created by Mr Reeve • OCR A Masterclass Framework</p>
+                <p class="mt-1" id="sc-timestamp"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAG 5 Potometer Modal -->
+    <div id="pag-potometer-modal" class="fixed inset-0 bg-canopy-900/80 z-[60] hidden items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-2xl max-w-2xl w-full shadow-2xl relative border-t-8 border-blue-600 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-canopy-900 flex items-center gap-2"><i class="ph-fill ph-drop text-blue-600"></i> PAG 5 Reminder: Using a Potometer</h2>
+                <button onclick="document.getElementById('pag-potometer-modal').classList.add('hidden')" class="text-gray-400 hover:text-orchid-600"><i class="ph-bold ph-x text-2xl"></i></button>
+            </div>
+            <div class="prose prose-sm text-canopy-900 bg-mist-100 p-4 rounded-xl border border-mist-200">
+                <div class="bg-white p-4 rounded-lg border border-blue-200 mb-4 shadow-sm">
+                    <p class="mb-1"><strong class="text-blue-700">Independent Variable:</strong> Abiotic factor (e.g., Wind speed via fan distance, Light intensity, Temperature, or Humidity).</p>
+                    <p class="mb-1"><strong class="text-blue-700">Dependent Variable:</strong> Rate of water uptake (mm³ min⁻¹) — used to <em>estimate</em> transpiration rate.</p>
+                    <p class="mb-0"><strong class="text-blue-700">Control Variables:</strong> Same leafy shoot (constant leaf surface area & stomatal density), temperature, light intensity, humidity, air movement.</p>
+                </div>
+                <h4 class="font-bold mb-2">Essential OCR A Method & Precautions</h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium">
+                    <li>Cut a leafy shoot <strong>under water</strong> and at a <strong>slant</strong> (45°) to prevent air bubbles entering xylem vessels (which would break the continuous water column) and to increase surface area for water uptake.</li>
+                    <li>Assemble the entire potometer apparatus <strong>under water</strong> and seal all joints with waterproof petroleum jelly (Vaseline) so the system is airtight.</li>
+                    <li>Dry the leaves gently with a paper towel (so stomata are not blocked by water) and allow the shoot to acclimatise for 10 minutes.</li>
+                    <li>Introduce a single air bubble into the capillary tube and record its starting position on the millimeter scale.</li>
+                    <li>Measure the distance moved ($l$) by the air bubble in a fixed time ($t$, e.g. 5 minutes). Use the reservoir tap to reset the bubble and take repeats.</li>
+                    <li><strong>Calculation:</strong> Volume of water taken up $= \pi r^2 l$ (where $r$ = radius of capillary bore). Rate $= \frac{\pi r^2 l}{t}$.</li>
+                    <li><strong>Exam Trap:</strong> A potometer measures <em>rate of water uptake</em>, not transpiration directly, because a small fraction (~1–5%) of water is used in photosynthesis and to maintain cell turgidity.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAG 1 & 2 Microscopy & Dissection Modal -->
+    <div id="pag-dissection-modal" class="fixed inset-0 bg-canopy-900/80 z-[60] hidden items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-2xl max-w-2xl w-full shadow-2xl relative border-t-8 border-purple-600 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-canopy-900 flex items-center gap-2"><i class="ph-fill ph-microscope text-purple-600"></i> PAG 1 & 2: Stained Sections & Stem Dissection</h2>
+                <button onclick="document.getElementById('pag-dissection-modal').classList.add('hidden')" class="text-gray-400 hover:text-orchid-600"><i class="ph-bold ph-x text-2xl"></i></button>
+            </div>
+            <div class="prose prose-sm text-canopy-900 bg-mist-100 p-4 rounded-xl border border-mist-200">
+                <div class="bg-white p-4 rounded-lg border border-purple-200 mb-4 shadow-sm">
+                    <p class="mb-1"><strong class="text-purple-700">PAG 1 (Light Microscopy):</strong> Examining and drawing low-power tissue plans of stained TS/LS herbaceous dicot roots, stems, and leaves.</p>
+                    <p class="mb-0"><strong class="text-purple-700">PAG 2 (Dissection):</strong> Cutting thin transverse (TS) and longitudinal (LS) sections of plant stems (e.g., celery or busy lizzie) using a sharp scalpel/razor blade away from fingers on a white tile.</p>
+                </div>
+                <h4 class="font-bold mb-2">Key Specification Details</h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium">
+                    <li><strong>Staining:</strong> Stain sections with <strong>Toluidine Blue O</strong> (stains lignified xylem walls blue-green and cellulose phloem/parenchyma pinkish-purple) or Phloroglucinol + HCl (stains lignin red).</li>
+                    <li><strong>Biological Drawing Rules:</strong> Use a sharp HB pencil, continuous single lines (no sketching/shading), draw a low-power tissue plan showing tissue boundaries (no individual cells unless high-power), include a title, scale/magnification, and horizontal ruled label lines.</li>
+                    <li><strong>Root vs Stem vs Leaf Distribution:</strong>
+                        <ul class="list-disc pl-5 mt-1">
+                            <li><strong>Root:</strong> Central star/X-shaped xylem with phloem nestled between arms, surrounded by pericycle and endodermis.</li>
+                            <li><strong>Stem:</strong> Discrete vascular bundles arranged in a peripheral ring; xylem on the inside, phloem on the outside, separated by cambium.</li>
+                            <li><strong>Leaf:</strong> Vascular bundles form the midrib and network of veins; xylem on the upper (adaxial) side, phloem on the lower (abaxial) side.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP LOGIC -->
+    <script>
+        // --- OCR A 3.1.3 DATA ---
+        const DATA = {
+            match: [
+                { q: "Xylem vessel", a: "Dead, hollow, elongated cells with no end walls and lignified walls with bordered pits to transport water and mineral ions upwards." },
+                { q: "Sieve tube element", a: "Living phloem cell lacking a nucleus and most organelles, joined end-to-end via perforated sieve plates to transport assimilates." },
+                { q: "Companion cell", a: "Metabolically active cell adjacent to a sieve tube element with many mitochondria to generate ATP for active loading of sucrose." },
+                { q: "Plasmodesmata", a: "Microscopic cytoplasmic channels passing through cell walls that link adjacent plant cells in the symplast pathway." },
+                { q: "Apoplast pathway", a: "Movement of water through the non-living cellulose cell walls and intercellular spaces without crossing a plasma membrane." },
+                { q: "Symplast pathway", a: "Movement of water through the living cytoplasm of adjacent cells via plasmodesmata down a water potential gradient." },
+                { q: "Casparian strip", a: "Waterproof band of suberin in endodermal cell walls that blocks the apoplast pathway, forcing water into the symplast." },
+                { q: "Transpiration", a: "The loss of water vapour from the aerial parts of a plant, mainly through open stomata, as an inevitable consequence of gas exchange." },
+                { q: "Transpiration stream", a: "Continuous upward movement of water from roots, up the xylem vessels, to the leaves driven by evaporation and tension." },
+                { q: "Cohesion", a: "Attraction between dipolar water molecules via hydrogen bonds, maintaining an unbroken column of water in the xylem." },
+                { q: "Adhesion", a: "Attraction between water molecules and the hydrophilic cellulose/lignin walls of narrow xylem vessels." },
+                { q: "Root pressure", a: "Positive hydrostatic pressure pushing water up the xylem due to active pumping of mineral ions into the xylem lowering its water potential." },
+                { q: "Potometer", a: "Apparatus used to estimate the rate of transpiration by measuring the rate of water uptake by a leafy shoot." },
+                { q: "Xerophyte", a: "A plant adapted to survive in dry habitats with limited water availability by minimising transpiration water loss." },
+                { q: "Hydrophyte", a: "A plant adapted to live submerged or floating in water, featuring large air spaces (aerenchyma) and upper-surface stomata." },
+                { q: "Translocation", a: "Energy-requiring mass flow transport of assimilates (such as sucrose and amino acids) in the phloem from sources to sinks." },
+                { q: "Source", a: "A region of a plant where assimilates are produced or released into the phloem (e.g., photosynthesising leaves or germinating tubers)." },
+                { q: "Sink", a: "A region of a plant where assimilates are removed from the phloem for respiration, growth, or storage (e.g., roots, meristems, fruits)." }
+            ],
+            quiz: [
+                { q: "Why do large multicellular plants require specialised vascular transport systems despite having a lower metabolic rate than mammals?", options: ["They have a small surface area to volume ratio and long diffusion distances between roots and leaves", "Plant cells lack cytoplasm and plasmodesmata for intracellular diffusion across cortical tissues", "Water molecules are too large to cross cellulose cell walls by osmosis at sufficient rates", "Photosynthesis occurs exclusively in root tissues and requires rapid upward transport of glucose"], ans: 0 },
+                { q: "How are xylem vessels arranged in a transverse section of a herbaceous dicotyledonous root?", options: ["In a central X-shaped or star-shaped core with phloem nestled between the arms", "In a peripheral ring of discrete vascular bundles separated by medullary rays", "Scattered randomly throughout the parenchyma ground tissue beneath the epidermis", "In a continuous hollow cylinder directly beneath the waxy cuticular epidermis"], ans: 0 },
+                { q: "What is the structural advantage of spiral or annular lignin thickening in young xylem vessels?", options: ["It prevents inward collapse under tension while allowing the stem or root to elongate", "It provides respiratory ATP directly for the active upward pumping of mineral ions", "It makes the entire vessel wall completely impermeable to lateral water movement", "It enables companion cells to actively load sucrose across the bordered pits"], ans: 0 },
+                { q: "What is the function of bordered pits in the lignified walls of xylem vessels?", options: ["They allow lateral movement of water between adjacent vessels if one becomes blocked by an air lock", "They actively pump mineral ions from the endodermis directly into the transpiration stream", "They allow companion cells to unload sucrose and amino acids into the xylem sap", "They regulate the rate of evaporation from spongy mesophyll cell walls into air spaces"], ans: 0 },
+                { q: "Why do mature sieve tube elements lack a nucleus, ribosomes, and a large central vacuole?", options: ["To maximise internal lumen space and reduce resistance to the mass flow of phloem sap", "Because they undergo programmed cell death and become hollow lignified tubes", "To prevent water from entering the sieve tube from adjacent xylem vessels by osmosis", "So that sucrose can be synthesised directly inside the peripheral cytoplasm"], ans: 0 },
+                { q: "How do companion cells support sieve tube elements?", options: ["They contain dense mitochondria to produce ATP for active loading of sucrose and carry out metabolic functions", "They deposit waterproof lignin rings around the perforated sieve plates to prevent collapse", "They absorb water and nitrate ions directly from the surrounding soil solution via root hairs", "They store insoluble starch granules inside the sieve pores to regulate hydrostatic pressure"], ans: 0 },
+                { q: "When preparing stained sections of plant stems in PAG 1/2, why is Toluidine Blue O commonly used?", options: ["It stains lignified xylem walls blue-green and non-lignified cellulose tissues pinkish-purple", "It dissolves the waterproof suberin in the Casparian strip so water pathways are visible", "It reacts with dissolved sucrose in sieve tubes to form a bright orange precipitate", "It prevents air bubbles from entering the vascular bundles during scalpel sectioning"], ans: 0 },
+                { q: "How does water initially enter a root hair cell from the surrounding soil solution?", options: ["By osmosis down a water potential gradient, maintained by active transport of mineral ions into the root hair", "By active transport of dipolar water molecules through specialised ATP-driven aquaporins", "By facilitated diffusion against a water potential gradient using carrier proteins", "By mass flow driven directly by positive hydrostatic pressure from the phloem"], ans: 0 },
+                { q: "Which statement accurately describes the apoplast pathway across the root cortex?", options: ["Water moves through interconnected cellulose cell walls and intercellular spaces pulled by cohesive forces", "Water moves exclusively through the living cytoplasm and vacuoles via microscopic plasmodesmata", "Water crosses the selectively permeable plasma membrane of every cortex cell by osmosis", "Water is actively pumped from cell to cell using ATP generated by cortical mitochondria"], ans: 0 },
+                { q: "What happens when water travelling via the apoplast pathway reaches the endodermis of the root?", options: ["The waterproof suberin Casparian strip blocks the cell wall route, forcing water into the symplast", "Water continues unimpeded through the endodermal cell walls directly into the xylem lumen", "Water is actively pumped backwards into the root cortex to maintain soil turgidity", "The Casparian strip dissolves temporarily to allow dissolved nitrate ions to diffuse freely"], ans: 0 },
+                { q: "Why is the diversion of water into the symplast pathway at the endodermis biologically important?", options: ["It forces water and mineral ions to cross a selectively permeable membrane, allowing control over ion entry", "It dramatically increases the velocity of water movement through the cellulose cell walls", "It prevents water molecules from forming hydrogen bonds before entering the xylem", "It ensures that sucrose from the phloem cannot leak into the surrounding soil solution"], ans: 0 },
+                { q: "How do endodermal cells help maintain a steep water potential gradient into the xylem?", options: ["They actively transport mineral ions into the xylem vessels, lowering the xylem's water potential", "They use ATP-driven aquaporins to pump pure water molecules directly into the xylem lumen", "They photosynthesise in the dark to accumulate high concentrations of soluble sucrose", "They secrete suberin into the xylem pits to prevent water from leaking back into the cortex"], ans: 0 },
+                { q: "According to the cohesion-tension theory, what generates the pulling force (tension) in the xylem?", options: ["Evaporation of water from spongy mesophyll cell walls into air spaces, followed by diffusion out of stomata", "Active pumping of water molecules upwards by mitochondria-rich root hair and endodermal cells", "High hydrostatic pressure generated by the active loading of sucrose into sieve tube elements", "Rhythmic contraction and relaxation of spiral lignin bands along the xylem vessel walls"], ans: 0 },
+                { q: "Which force prevents the column of water in the xylem from breaking under negative pressure (tension)?", options: ["Cohesion: hydrogen bonding between dipolar water molecules", "Active transport of H+ ions across companion cell membranes", "Positive turgor pressure maintained by epidermal guard cells", "Suberin waterproofing within the endodermal Casparian strip"], ans: 0 },
+                { q: "What evidence supports the cohesion-tension theory of water transport in xylem?", options: ["Tree trunk diameter shrinks slightly during the day when transpiration is highest due to inward pull on xylem walls", "Tree trunk diameter expands rapidly at midday due to positive hydrostatic pressure inside xylem vessels", "Cutting a stem under water causes xylem sap to squirt out continuously under high positive root pressure", "Applying metabolic inhibitors such as cyanide to roots immediately halts all transpiration in the leaves"], ans: 0 },
+                { q: "Why is transpiration described as an inevitable consequence of gas exchange in plants?", options: ["Stomata must open during the day for CO2 diffusion into the leaf, allowing water vapour to diffuse out", "Oxygen produced in photosynthesis can only exit the leaf when dissolved in liquid water droplets", "Guard cells require continuous water evaporation to generate ATP for active potassium ion uptake", "Xylem vessels terminate directly on the upper leaf surface and remain open to the atmosphere"], ans: 0 },
+                { q: "How does increasing wind speed (air movement) increase the rate of transpiration?", options: ["It blows away the humid boundary layer around the leaf, maintaining a steeper water vapour potential gradient", "It increases the kinetic energy of liquid water molecules moving through the root cortex", "It stimulates guard cells to actively pump potassium ions out and open the stomatal pore wider", "It lowers the solute potential inside the spongy mesophyll cells to accelerate osmosis"], ans: 0 },
+                { q: "How does high atmospheric humidity affect the rate of transpiration?", options: ["It reduces the water vapour potential gradient between sub-stomatal air spaces and outside air, slowing diffusion", "It increases the rate of evaporation from spongy mesophyll cell walls into the internal air spaces", "It causes epidermal guard cells to become fully turgid and open the stomatal pores wider", "It strengthens hydrogen bonding between water molecules inside the lignified xylem vessels"], ans: 0 },
+                { q: "When setting up a potometer (PAG 5), why must the leafy shoot be cut and inserted under water?", options: ["To prevent air bubbles entering the xylem vessels, which would break the continuous column of water", "To wash away excess mineral ions and phloem sap from the cut vascular bundles", "To keep the lower leaf epidermis wet so that the stomata remain closed during acclimatisation", "To soften the stem tissues so that petroleum jelly forms a stronger chemical bond"], ans: 0 },
+                { q: "A potometer capillary tube has a radius of 0.5 mm. The air bubble moves 24 mm in 4 minutes. What is the rate of water uptake?", options: ["4.71 mm³ min⁻¹", "18.85 mm³ min⁻¹", "1.50 mm³ min⁻¹", "9.42 mm³ min⁻¹"], ans: 0 },
+                { q: "Why is the rate measured by a potometer slightly higher than the actual rate of transpiration?", options: ["A small percentage of the water taken up is used for photosynthesis and maintaining cell turgidity", "Water continuously evaporates through the sealed glass reservoir and rubber tubing joints", "The air bubble expands due to thermal energy from the lamp as it moves along the scale", "Phloem translocation actively pumps water out of the capillary tube into the leaf"], ans: 0 },
+                { q: "How do rolled leaves and sunken stomata in marram grass (Ammophila) reduce transpiration?", options: ["They trap a layer of still, humid air around the stomata, reducing the water vapour potential gradient", "They reflect incoming solar radiation to prevent photosynthesis and stomatal opening", "They actively pump escaped water vapour back into the spongy mesophyll air spaces", "They increase the total exposed surface area of the upper epidermis for gas exchange"], ans: 0 },
+                { q: "Which adaptation is characteristic of a hydrophyte such as a water lily (Nymphaea)?", options: ["Stomata on the upper epidermis and large aerenchyma air spaces for buoyancy and oxygen diffusion", "A thick waxy cuticle and dense interlocking trichomes covering the lower leaf epidermis", "Extensive deep taproots and leaves reduced to non-photosynthetic spines to save water", "Sunken stomata located inside deeply curled leaf pits to trap a humid boundary layer"], ans: 0 },
+                { q: "During active loading of sucrose at a source, what is the role of the proton (H+) pump in the companion cell membrane?", options: ["It uses ATP to actively pump H+ ions out of the companion cell into the cell wall space, creating a gradient", "It uses ATP to pump sucrose molecules directly from the xylem vessels into the sieve tube element", "It allows H+ ions to diffuse passively into the companion cell down an electrochemical gradient", "It hydrolyses sucrose into glucose and fructose so they can cross the phospholipid bilayer"], ans: 0 },
+                { q: "How does sucrose enter the companion cell during active loading?", options: ["By co-transport: H+ ions diffuse back down their gradient through a co-transporter protein, carrying sucrose", "By simple passive diffusion directly through the hydrophobic core of the phospholipid bilayer", "By osmosis through specialised water-filled aquaporin channels in the plasma membrane", "By receptor-mediated endocytosis from the adjacent sieve tube element lumen"], ans: 0 },
+                { q: "How does sucrose move from the companion cell into the sieve tube element?", options: ["It diffuses down a concentration gradient through plasmodesmata", "It is actively pumped across perforated sieve plates using ATP", "It travels via the non-living cellulose cell wall apoplast route", "It is pulled upwards by negative tension from the xylem"], ans: 0 },
+                { q: "What causes high hydrostatic pressure to build up in the sieve tube element at the source?", options: ["High sucrose concentration lowers water potential, so water enters from the xylem by osmosis", "Companion cells use ATP-driven pumps to force liquid water directly into the sieve tube", "Perforated sieve plates completely block all downward mass flow of assimilate sap", "Lignified phloem walls contract inwards around the cytoplasm to compress the sap"], ans: 0 },
+                { q: "What happens at a sink (such as a growing root tip) to maintain mass flow in the phloem?", options: ["Sucrose is removed, raising water potential in the sieve tube so water leaves by osmosis and pressure drops", "Additional sucrose is actively co-transported into the sieve tube to increase solute concentration", "Water enters the sieve tube from the adjacent xylem vessels to maintain maximum hydrostatic pressure", "Companion cells actively pump H+ ions into the sink cells to generate negative tension"], ans: 0 },
+                { q: "Which piece of experimental evidence demonstrates that translocation in phloem is an active metabolic process?", options: ["Applying metabolic inhibitors (e.g., cyanide) stops translocation by preventing ATP synthesis in companion cells", "Phloem sap flows at an identical constant velocity during both bright daylight and complete darkness", "Xylem vessels contain higher concentrations of dissolved sucrose than adjacent sieve tube elements", "Removing a ring of bark from a woody stem causes immediate swelling below the cut surface"], ans: 0 },
+                { q: "When a ring of bark (containing phloem) is removed from a woody stem ('ringing experiment'), a bulge forms above the cut. Why?", options: ["Sugars accumulating above the cut lower the water potential, drawing water in by osmosis and swelling tissues", "Water travelling up the xylem vessels leaks out into the cortex immediately above the cut", "Root pressure forces dissolved soil minerals into the outer bark tissues above the ring", "The waterproof Casparian strip blocks upward water flow and diverts sap into the bark"], ans: 0 }
+            ],
+            long: [
+                {
+                    q: "Explain how water is absorbed from the soil and transported across the root to the xylem vessels, including the role of the endodermis. (6 marks)",
+                    low: "Water goes into the root hair cells by osmosis because there is more water in the soil. It then goes through the cortex cells in two ways, apoplast and symplast, until it reaches the xylem in the middle of the root.",
+                    med: "Root hair cells actively transport mineral ions in to lower their water potential, so water enters by osmosis. Water crosses the cortex via the apoplast pathway (through cell walls) and symplast pathway (through cytoplasm and plasmodesmata). At the endodermis, the Casparian strip blocks the apoplast pathway, forcing water into the symplast and then into the xylem.",
+                    high: "1. Root hair cells actively transport mineral ions from the soil, lowering their cytoplasm water potential below that of soil water, so water enters by osmosis.\n2. Water crosses the root cortex via the apoplast pathway (through cellulose cell walls and intercellular spaces) and the symplast pathway (through cytoplasm via plasmodesmata down a water potential gradient).\n3. At the endodermis, the waterproof suberin Casparian strip blocks the apoplast pathway.\n4. Water is forced through the selectively permeable plasma membrane into the cytoplasm (symplast pathway), allowing the plant to regulate which mineral ions enter the xylem.\n5. Endodermal cells actively pump mineral ions into the xylem vessels, lowering the xylem's water potential.\n6. Water moves from the endodermis into the xylem by osmosis down a water potential gradient (contributing to root pressure)."
+                },
+                {
+                    q: "Describe and explain the cohesion-tension theory of water transport up the xylem from the roots to the leaves. (6 marks)",
+                    low: "Water evaporates from the leaves in transpiration. This pulls water up the xylem like a straw because water molecules stick together. Xylem has thick walls so it doesn't collapse.",
+                    med: "Water evaporates from spongy mesophyll cells and diffuses out of open stomata. This lowers the water potential in mesophyll cells, drawing water from the xylem. Water molecules are held together by cohesion (hydrogen bonds) and stick to xylem walls by adhesion, forming a continuous column pulled up under tension.",
+                    high: "1. Water evaporates from the moist cell walls of spongy mesophyll cells into the sub-stomatal air spaces and diffuses out through open stomata down a water vapour potential gradient (transpiration).\n2. Loss of water lowers the water potential of mesophyll cells, drawing water by osmosis from adjacent cells and ultimately from the xylem vessels.\n3. This creates a negative pressure (tension / transpiration pull) at the top of the xylem.\n4. Dipolar water molecules form hydrogen bonds with each other (cohesion), creating an unbroken, continuous column of water.\n5. Water molecules also form hydrogen bonds with the hydrophilic lignified/cellulose walls of narrow xylem vessels (adhesion).\n6. The continuous column of water is pulled upwards under tension (mass flow), supported by thick lignified xylem walls that prevent inward collapse."
+                },
+                {
+                    q: "Explain the mechanism of translocation of sucrose from a source to a sink according to the mass flow hypothesis. (6 marks)",
+                    low: "Sucrose is made in the leaves and moved in the phloem to the roots. Companion cells use energy to put sucrose into the phloem. Water enters and pushes the sugar down to the sink.",
+                    med: "At the source, companion cells use ATP to actively pump H+ ions out. H+ ions diffuse back in through co-transporter proteins with sucrose. Sucrose diffuses through plasmodesmata into the sieve tube element. This lowers the water potential so water enters from the xylem by osmosis, raising hydrostatic pressure and pushing sap to the sink where sucrose is removed.",
+                    high: "1. At the source (e.g., photosynthesising leaf), companion cells use ATP to actively transport H+ ions out into surrounding tissues, establishing a proton gradient.\n2. H+ ions diffuse back into the companion cell down their concentration gradient through co-transporter proteins, carrying sucrose molecules against their gradient (secondary active transport).\n3. Sucrose diffuses from the companion cell into the sieve tube element through plasmodesmata.\n4. Increased sucrose concentration lowers the water potential inside the sieve tube, so water enters from the adjacent xylem by osmosis, generating high hydrostatic pressure.\n5. At the sink (e.g., root/meristem), sucrose is actively or passively unloaded and respired or converted to insoluble starch, raising the sieve tube's water potential so water leaves by osmosis (lowering hydrostatic pressure).\n6. Phloem sap moves by mass flow down a hydrostatic pressure gradient from source to sink."
+                },
+                {
+                    q: "Explain how xerophytes, such as marram grass (Ammophila), are structurally adapted to reduce water loss in dry habitats. (6 marks)",
+                    low: "Marram grass has rolled up leaves and hairs to trap water. It also has a thick waxy cuticle to stop water evaporating and fewer stomata so less water escapes.",
+                    med: "Xerophytes have a thick waxy cuticle to reduce evaporation through the epidermis. Their leaves roll up with stomata on the inside, and have sunken stomata in pits and epidermal hairs (trichomes). These features trap humid air, reducing the water vapour concentration gradient so less water diffuses out.",
+                    high: "1. Thick waxy cuticle on the outer epidermis reduces cuticular evaporation as wax is waterproof.\n2. Rolled leaves (driven by hinge cells) enclose the lower epidermis, creating a sheltered microclimate.\n3. Sunken stomata located in pits and dense epidermal hairs (trichomes) trap a layer of still, moist air.\n4. Trapping humid air reduces the water vapour potential gradient between the sub-stomatal air spaces and the external atmosphere, slowing the rate of diffusion.\n5. Reduced leaf surface area (e.g., spines in cacti or needle-like leaves) minimises the area available for transpiration.\n6. Extensive shallow roots absorb brief rainfall rapidly, while deep taproots access deep water tables."
+                },
+                {
+                    q: "Compare and contrast the structure and function of xylem vessels and phloem sieve tube elements. (6 marks)",
+                    low: "Xylem is dead and carries water up the plant. It has lignin in its walls. Phloem is alive and carries sugar up and down. Phloem has companion cells and sieve plates.",
+                    med: "Xylem vessels are dead, hollow tubes with no end walls and walls strengthened with lignin; they transport water and mineral ions upwards only. Phloem sieve tube elements are living cells with perforated sieve plates and no nucleus; they transport assimilates like sucrose both upwards and downwards with the help of companion cells.",
+                    high: "1. Xylem vessels are composed of dead, hollow cells lacking cytoplasm and organelles; sieve tube elements are living cells containing peripheral cytoplasm (though lacking a nucleus and ribosomes).\n2. Xylem vessels have no end walls (forming a continuous tube); sieve tube elements retain perforated end walls called sieve plates.\n3. Xylem cell walls are thickened with waterproof lignin for structural support; sieve tube walls are unlignified cellulose.\n4. Xylem vessels have bordered pits for lateral water movement; sieve tube elements are linked to companion cells via plasmodesmata.\n5. Xylem transports water and dissolved mineral ions unidirectionally (upwards only) via passive tension; phloem transports assimilates (sucrose/amino acids) bidirectionally (up and down) via active mass flow."
+                },
+                {
+                    q: "Describe how you would use a potometer to investigate the effect of wind speed on the rate of transpiration, including precautions to ensure valid results. (6 marks)",
+                    low: "Cut a plant shoot underwater and put it in a potometer with Vaseline. Put a fan near it at different distances and time how far the air bubble moves. Repeat it and calculate the rate.",
+                    med: "Cut a leafy shoot at an angle underwater and assemble the potometer underwater, sealing joints with petroleum jelly to prevent air leaks. Dry the leaves. Place a fan at different distances to vary wind speed. Measure the distance the air bubble moves in a set time, calculate volume using πr²l, and divide by time. Keep temperature and light constant.",
+                    high: "1. Cut a healthy leafy shoot at a 45° angle under water and assemble the potometer completely under water to prevent air bubbles entering the xylem (which would break the water column).\n2. Seal all joints with waterproof petroleum jelly (Vaseline) and gently blot the leaves dry before allowing the shoot to acclimatise.\n3. Vary the independent variable (wind speed) by placing an electric fan at 5 measured distances (e.g., 20, 40, 60, 80, 100 cm) from the shoot.\n4. Use the reservoir tap to reset a single air bubble to zero, and measure the distance moved ($l$) in a fixed time ($t$, e.g., 5 minutes), taking at least 3 repeats at each distance.\n5. Control abiotic variables: maintain constant temperature, light intensity, and humidity, and use the same shoot throughout.\n6. Calculate water uptake rate using $\\frac{\\pi r^2 l}{t}$ (where $r$ is the capillary tube radius) as an estimate of transpiration rate."
+                }
+            ]
+        };
+
+        let state = {
+            match: { q: null, a: null, solved: [], batch: 0, qs: [], as: [] },
+            quiz: { queue: [], retry: [], current: null, correct: 0 },
+            long: { scores: {}, current: 0, answers: {} },
+            graph: { correct: 0, activeLabelId: null, activeLabelEl: null },
+            streak: 0
+        };
+
+        let actionState = {
+            pastPapers: false,
+            rewatchPAGs: false,
+            flashcards: false,
+            glossary: false,
+            copyWork: false,
+            seeTeacher: false,
+            none: false,
+            flashcardTopic: "",
+            glossaryWords: "",
+            copyWho: "",
+            copyDate: "",
+            teacherDate: ""
+        };
+
+        // Initialize App
+        function initApp() {
+            const mData = [...DATA.match].sort(() => Math.random() - 0.5);
+            state.match.qs = mData.map((m, i) => ({ t: m.q, id: i })).sort(() => Math.random() - 0.5);
+            state.match.as = mData.map((m, i) => ({ t: m.a, id: i })).sort(() => Math.random() - 0.5);
+            
+            loadMatchBatch();
+
+            state.quiz.queue = DATA.quiz.map(q => {
+                const ansText = q.options[q.ans];
+                const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+                return { ...q, options: shuffled, ans: shuffled.indexOf(ansText) };
+            }).sort(() => Math.random() - 0.5);
+            nextQuiz();
+
+            renderLong();
+        }
+        
+        function nextGraph(idx) {
+            document.querySelectorAll('.graph-slide').forEach(el => el.classList.add('hidden'));
+            document.getElementById('graph-slide-' + idx).classList.remove('hidden');
+        }
+
+        // --- Navigation & Splash ---
+        function enterApp() {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('hidden');
+                document.getElementById('app-header').classList.remove('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                document.getElementById('main-body').classList.remove('overflow-hidden');
+                initApp();
+            }, 800);
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'border-orchid-600', 'text-orchid-600', 'bg-pink-50'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            const btn = document.getElementById(`nav-${id}`);
+            btn.classList.add('active');
+            document.getElementById(`tab-${id}`).classList.add('active');
+
+            if (id === 'dash') updateDashboard();
+        }
+
+        // Action Plan Logic
+        function toggleAction(action) {
+            const cb = document.getElementById(`chk-${action}`);
+            if (action === 'none') {
+                if (cb.checked) {
+                    ['pastPapers', 'rewatchPAGs', 'flashcards', 'glossary', 'copyWork', 'seeTeacher'].forEach(a => {
+                        document.getElementById(`chk-${a}`).checked = false;
+                        actionState[a] = false;
+                    });
+                }
+            } else {
+                if (cb.checked) {
+                    document.getElementById('chk-none').checked = false;
+                    actionState.none = false;
+                }
+            }
+            actionState[action] = cb.checked;
+            
+            document.getElementById('input-flashcards').classList.toggle('hidden', !actionState.flashcards);
+            document.getElementById('input-glossary').classList.toggle('hidden', !actionState.glossary);
+            document.getElementById('input-copyWork').classList.toggle('hidden', !actionState.copyWork);
+            document.getElementById('input-seeTeacher').classList.toggle('hidden', !actionState.seeTeacher);
+        }
+
+        function submitActionPlan() {
+            if (actionState.flashcards) actionState.flashcardTopic = document.getElementById('val-flashcards').value.trim();
+            if (actionState.glossary) actionState.glossaryWords = document.getElementById('val-glossary').value.trim();
+            if (actionState.copyWork) {
+                actionState.copyWho = document.getElementById('val-copyWho').value.trim();
+                actionState.copyDate = document.getElementById('val-copyDate').value.trim();
+            }
+            if (actionState.seeTeacher) actionState.teacherDate = document.getElementById('val-seeTeacher').value.trim();
+
+            document.getElementById('action-plan-section').classList.add('hidden');
+            document.getElementById('resources-grid').classList.remove('hidden');
+            document.getElementById('resources-intro').innerText = "Exam Prep & PAG Guides unlocked. Use these to complete your action plan.";
+        }
+
+        function updateStreak(isCorrect) {
+            const icon = document.getElementById('streak-icon');
+            if (isCorrect) {
+                state.streak++;
+                icon.innerText = state.streak >= 5 ? '🌳' : (state.streak >= 2 ? '🌿' : '🌱');
+                icon.classList.remove('animate-sprout-bloom', 'animate-flash-red');
+                void icon.offsetWidth;
+                icon.classList.add('animate-sprout-bloom');
+            } else {
+                state.streak = 0;
+                icon.innerText = '🥀';
+                icon.classList.remove('animate-sprout-bloom', 'animate-flash-red');
+                void icon.offsetWidth;
+                icon.classList.add('animate-flash-red');
+                setTimeout(() => { if(state.streak === 0) icon.innerText = '🌱'; }, 1200);
+            }
+            document.getElementById('streak-counter').innerText = state.streak;
+        }
+
+        // Match Logic
+        function loadMatchBatch() {
+            const qCol = document.getElementById('match-col-q');
+            const aCol = document.getElementById('match-col-a');
+            qCol.innerHTML = ''; aCol.innerHTML = '';
+            
+            document.getElementById('match-round').innerText = state.match.batch + 1;
+            
+            const start = state.match.batch * 6;
+            const end = start + 6;
+            
+            const currentQs = state.match.qs.filter(item => item.id >= start && item.id < end);
+            const currentAs = state.match.as.filter(item => item.id >= start && item.id < end);
+
+            currentQs.forEach(item => {
+                if(state.match.solved.includes(item.id)) return;
+                const btn = document.createElement('button');
+                btn.className = `match-q w-full text-left p-4 rounded-xl shadow border-2 border-mist-200 bg-white font-semibold hover:border-orchid-600 transition-all text-canopy-900`;
+                btn.innerText = item.t;
+                btn.dataset.id = item.id;
+                btn.onclick = () => handleMatch('q', item.id, btn);
+                qCol.appendChild(btn);
+            });
+            currentAs.forEach(item => {
+                if(state.match.solved.includes(item.id)) return;
+                const btn = document.createElement('button');
+                btn.className = `match-a w-full text-left p-4 rounded-xl shadow border-2 border-mist-200 bg-white font-medium hover:border-amber-500 transition-all text-canopy-900 text-sm`;
+                btn.innerText = item.t;
+                btn.dataset.id = item.id;
+                btn.onclick = () => handleMatch('a', item.id, btn);
+                aCol.appendChild(btn);
+            });
+        }
+
+        function handleMatch(type, id, btn) {
+            if (state.match.solved.includes(id)) return;
+
+            document.querySelectorAll(`.match-${type}`).forEach(b => {
+                if(!state.match.solved.includes(parseInt(b.dataset.id))) b.classList.remove('border-orchid-600', 'bg-pink-50', 'border-amber-500', 'bg-amber-50');
+            });
+
+            if (type === 'q') {
+                state.match.q = state.match.q === id ? null : id;
+                if(state.match.q !== null) btn.classList.add('border-orchid-600', 'bg-pink-50');
+            } else {
+                state.match.a = state.match.a === id ? null : id;
+                if(state.match.a !== null) btn.classList.add('border-amber-500', 'bg-amber-50');
+            }
+
+            if (state.match.q !== null && state.match.a !== null) {
+                if (state.match.q === state.match.a) {
+                    state.match.solved.push(state.match.q);
+                    document.querySelector(`.match-q[data-id="${state.match.q}"]`).classList.add('hidden');
+                    document.querySelector(`.match-a[data-id="${state.match.a}"]`).classList.add('hidden');
+                    updateStreak(true);
+                    
+                    const batchSolved = state.match.solved.filter(sid => sid >= state.match.batch * 6 && sid < (state.match.batch + 1) * 6).length;
+                    
+                    if (state.match.solved.length === 18) {
+                        document.getElementById('match-grid').classList.add('hidden');
+                        document.getElementById('match-complete').classList.remove('hidden');
+                    } else if (batchSolved === 6) {
+                        setTimeout(() => {
+                            state.match.batch++;
+                            loadMatchBatch();
+                        }, 500);
+                    }
+                } else {
+                    const qb = document.querySelector(`.match-q[data-id="${state.match.q}"]`);
+                    const ab = document.querySelector(`.match-a[data-id="${state.match.a}"]`);
+                    qb.classList.add('animate-shake'); ab.classList.add('animate-shake');
+                    updateStreak(false);
+                    setTimeout(() => { qb.classList.remove('animate-shake', 'border-orchid-600', 'bg-pink-50'); ab.classList.remove('animate-shake', 'border-amber-500', 'bg-amber-50'); }, 450);
+                }
+                state.match.q = null; state.match.a = null;
+                document.getElementById('match-score').innerText = state.match.solved.length;
+            }
+        }
+
+        // Interactive Diagram Lab Logic
+        function handleLabelClick(id, element) {
+            if (element.classList.contains('correct')) return;
+            
+            document.querySelectorAll('.tap-item').forEach(el => {
+                if (!el.classList.contains('correct')) el.classList.remove('selected');
+            });
+            
+            if (state.graph.activeLabelId === id) {
+                state.graph.activeLabelId = null;
+                state.graph.activeLabelEl = null;
+            } else {
+                element.classList.add('selected');
+                state.graph.activeLabelId = id;
+                state.graph.activeLabelEl = element;
+            }
+        }
+
+        function handleZoneClick(answerId, element) {
+            if (!state.graph.activeLabelId) return;
+
+            if (state.graph.activeLabelId === answerId) {
+                element.innerHTML = '';
+                element.appendChild(state.graph.activeLabelEl);
+                element.classList.add('bg-emerald-100', 'border-emerald-600');
+                state.graph.activeLabelEl.classList.remove('selected', 'p-2.5', 'text-xs');
+                state.graph.activeLabelEl.classList.add('correct', 'p-1', 'text-[9px]', 'leading-tight');
+                
+                state.graph.correct++;
+                document.getElementById('graph-score').innerText = state.graph.correct;
+                updateStreak(true);
+                
+                state.graph.activeLabelId = null;
+                state.graph.activeLabelEl = null;
+            } else {
+                updateStreak(false);
+                element.classList.add('animate-shake', 'border-orchid-600', 'bg-pink-50');
+                setTimeout(() => element.classList.remove('animate-shake', 'border-orchid-600', 'bg-pink-50'), 450);
+            }
+        }
+
+        // Quiz Logic
+        function nextQuiz() {
+            if (state.quiz.queue.length === 0) {
+                if (state.quiz.retry.length > 0) {
+                    state.quiz.queue = state.quiz.retry.sort(() => Math.random() - 0.5);
+                    state.quiz.retry = [];
+                } else {
+                    document.getElementById('quiz-container').classList.add('hidden');
+                    document.getElementById('quiz-complete').classList.remove('hidden');
+                    return;
+                }
+            }
+            state.quiz.current = state.quiz.queue.shift();
+            document.getElementById('quiz-progress').innerText = `${state.quiz.correct} / 30`;
+            document.getElementById('quiz-question').innerText = state.quiz.current.q;
+            
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+            state.quiz.current.options.forEach((o, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-canopy-700 bg-canopy-800 hover:border-amber-500 transition-colors font-medium";
+                btn.innerText = o;
+                btn.onclick = () => handleQuiz(i, btn);
+                opts.appendChild(btn);
+            });
+        }
+
+        function handleQuiz(selIdx, btn) {
+            const isCorrect = selIdx === state.quiz.current.ans;
+            const allBtns = document.getElementById('quiz-options').children;
+            for(let i=0; i<allBtns.length; i++) {
+                allBtns[i].className = "w-full text-left p-4 rounded-xl border border-canopy-700 bg-canopy-900 opacity-50 pointer-events-none";
+                if (i === selIdx) {
+                    if (isCorrect) allBtns[i].className = "w-full text-left p-4 rounded-xl border-2 border-amber-400 bg-amber-500/20 text-amber-400 font-bold pointer-events-none shadow-[0_0_15px_rgba(251,191,36,0.3)]";
+                    else allBtns[i].className = "w-full text-left p-4 rounded-xl border-2 border-orchid-600 bg-orchid-700/20 text-pink-300 font-bold pointer-events-none animate-shake";
+                }
+                if (i === state.quiz.current.ans && !isCorrect) {
+                    allBtns[i].className = "w-full text-left p-4 rounded-xl border-2 border-amber-400/50 bg-canopy-800 text-mist-200 border-dashed pointer-events-none";
+                }
+            }
+
+            if (isCorrect) {
+                state.quiz.correct++;
+                updateStreak(true);
+            } else {
+                state.quiz.retry.push(state.quiz.current);
+                updateStreak(false);
+            }
+            setTimeout(nextQuiz, 1100);
+        }
+
+        // Long Answers
+        function renderLong() {
+            const lCont = document.getElementById('long-list');
+            lCont.innerHTML = '';
+            
+            if (state.long.current >= DATA.long.length) {
+                lCont.innerHTML = `
+                    <div class="text-center py-10 bg-emerald-50 border border-emerald-600 rounded-xl text-emerald-900">
+                        <i class="ph-fill ph-check-circle text-6xl mb-2 text-emerald-600"></i>
+                        <h3 class="text-2xl font-bold">All 6-Mark Extended Responses Complete!</h3>
+                        <p class="mt-2">Check your dashboard to generate your final mark report.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const i = state.long.current;
+            const item = DATA.long[i];
+            const div = document.createElement('div');
+            div.className = "bg-white p-6 rounded-2xl shadow-sm border border-mist-300 animate-slide-in";
+            const isMarked = state.long.scores[i] !== undefined;
+            const currentAnswer = state.long.answers[i] || '';
+
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg text-canopy-900"><span class="bg-mist-200 text-canopy-800 px-2.5 py-1 rounded mr-2">Question ${i+1} of 6</span></h3>
+                </div>
+                <h3 class="font-bold text-lg text-canopy-900 mb-4">${item.q}</h3>
+                
+                <textarea id="long-in-${i}" class="w-full h-36 p-4 border border-mist-300 rounded-xl mb-4 outline-none focus:border-orchid-600 bg-mist-100" placeholder="Write your OCR A-Level response here using exact specification terminology..." oninput="state.long.answers[${i}] = this.value" ${isMarked ? 'disabled' : ''}>${currentAnswer}</textarea>
+                
+                ${!isMarked ? `<button onclick="revealLong(${i})" id="btn-reveal-${i}" class="w-full bg-canopy-800 hover:bg-canopy-900 text-white font-bold py-3 rounded-xl transition-colors">Submit & Reveal Mark Scheme</button>` : ''}
+                
+                <div id="long-fb-${i}" class="${isMarked ? '' : 'hidden'} mt-6 space-y-4">
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200"><strong class="text-red-700 block mb-1">Low (1–2 Marks)</strong><p class="text-sm text-canopy-900">${item.low}</p></div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200"><strong class="text-amber-700 block mb-1">Medium (3–4 Marks)</strong><p class="text-sm text-canopy-900">${item.med}</p></div>
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200"><strong class="text-emerald-700 block mb-1">High (5–6 Marks)</strong><p class="text-sm text-canopy-900 whitespace-pre-line">${item.high}</p></div>
+                    <div class="mt-4 border-t border-mist-200 pt-4">
+                        <p class="font-bold text-canopy-800 mb-2">Self-assess and award yourself marks (0–6):</p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            ${[0,1,2,3,4,5,6].map(m => `<button onclick="setLongScore(${i},${m})" class="long-score-${i} w-10 h-10 rounded-lg border border-mist-300 font-bold text-canopy-700 hover:bg-orchid-600 hover:text-white transition-colors ${state.long.scores[i] === m ? 'bg-orchid-600 text-white border-orchid-700 shadow-md scale-110' : ''}">${m}</button>`).join('')}
+                        </div>
+                        <button onclick="nextLong()" class="w-full bg-orchid-600 hover:bg-orchid-700 text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2">Next Question <i class="ph-bold ph-arrow-right"></i></button>
+                    </div>
+                </div>
+            `;
+            lCont.appendChild(div);
+        }
+
+        function revealLong(i) {
+            document.getElementById(`long-in-${i}`).disabled = true;
+            document.getElementById(`btn-reveal-${i}`).classList.add('hidden');
+            document.getElementById(`long-fb-${i}`).classList.remove('hidden');
+        }
+
+        function setLongScore(qId, score) {
+            state.long.scores[qId] = score;
+            renderLong();
+        }
+        
+        function nextLong() {
+            state.long.current++;
+            renderLong();
+        }
+
+        // Dashboard & Scorecard
+        function updateDashboard() {
+            document.getElementById('dash-match').innerText = state.match.solved.length;
+            document.getElementById('dash-quiz').innerText = state.quiz.correct;
+            document.getElementById('dash-graph').innerText = state.graph.correct;
+            
+            const longTotal = Object.values(state.long.scores).reduce((a,b)=>a+b,0);
+            document.getElementById('dash-long').innerText = longTotal;
+        }
+
+        function openNameModal() {
+            document.getElementById('name-modal').classList.remove('hidden');
+            document.getElementById('name-modal').classList.add('flex');
+        }
+        function closeModals() {
+            document.getElementById('name-modal').classList.add('hidden');
+            document.getElementById('name-modal').classList.remove('flex');
+            document.getElementById('scorecard-modal').classList.add('hidden');
+            document.getElementById('scorecard-modal').classList.remove('flex');
+        }
+
+        function generateScorecard() {
+            const name = document.getElementById('student-name-input').value.trim();
+            if(!name) return;
+            
+            closeModals();
+            document.getElementById('sc-name').innerText = name;
+            document.getElementById('sc-match').innerText = state.match.solved.length;
+            document.getElementById('sc-quiz').innerText = state.quiz.correct;
+            document.getElementById('sc-graph').innerText = state.graph.correct;
+            
+            const longTotal = Object.values(state.long.scores).reduce((a,b)=>a+b,0);
+            document.getElementById('sc-long').innerText = longTotal;
+            
+            let bonus = 0;
+            let actionListHtml = "";
+            
+            if (actionState.pastPapers) { bonus += 3; actionListHtml += "<div>• Past paper questions (3.1.3)</div>"; }
+            if (actionState.rewatchPAGs) { bonus += 3; actionListHtml += "<div>• Rewatch PAG 1, 2 & 5 practicals</div>"; }
+            if (actionState.flashcards) { 
+                if (actionState.flashcardTopic) bonus += 3;
+                actionListHtml += `<div>• Flashcards (Weak topic: <span class="font-bold text-canopy-800">${actionState.flashcardTopic || 'None'}</span>)</div>`; 
+            }
+            if (actionState.glossary) { 
+                if (actionState.glossaryWords) bonus += 3;
+                actionListHtml += `<div>• Glossary (Words: <span class="font-bold text-canopy-800">${actionState.glossaryWords || 'None'}</span>)</div>`; 
+            }
+            if (actionState.copyWork) { 
+                if (actionState.copyWho || actionState.copyDate) bonus += 3;
+                actionListHtml += `<div>• Copy work (From: <span class="font-bold text-canopy-800">${actionState.copyWho || 'N/A'}</span> on <span class="font-bold text-canopy-800">${actionState.copyDate || 'N/A'}</span>)</div>`; 
+            }
+            if (actionState.seeTeacher) { 
+                if (actionState.teacherDate) bonus += 3;
+                actionListHtml += `<div>• See teacher (Date: <span class="font-bold text-canopy-800">${actionState.teacherDate || 'N/A'}</span>)</div>`; 
+            }
+            
+            if (actionState.none || actionListHtml === "") {
+                actionListHtml = "<div class='italic text-gray-400'>No actions selected.</div>";
+            }
+
+            // Cap bonus at 6 marks so total is out of 100 (94 core + 6 bonus)
+            bonus = Math.min(bonus, 6);
+
+            document.getElementById('sc-action-list').innerHTML = actionListHtml;
+            
+            const bonusContainer = document.getElementById('sc-bonus-container');
+            if (bonus > 0) {
+                bonusContainer.classList.remove('hidden');
+                document.getElementById('sc-bonus').innerText = bonus;
+            } else {
+                bonusContainer.classList.add('hidden');
+            }
+            
+            const total = state.match.solved.length + state.quiz.correct + state.graph.correct + longTotal + bonus;
+            const max = 100;
+            
+            document.getElementById('sc-total').innerText = total;
+            document.getElementById('sc-percent').innerText = Math.round((total/max)*100);
+            document.getElementById('sc-timestamp').innerText = new Date().toLocaleString();
+            
+            document.getElementById('scorecard-modal').classList.remove('hidden');
+            document.getElementById('scorecard-modal').classList.add('flex');
+
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance("Thank you for locking in to your transport in plants revision today.");
+                const voices = window.speechSynthesis.getVoices();
+                const ukVoice = voices.find(voice => voice.lang === 'en-GB');
+                if (ukVoice) {
+                    utterance.voice = ukVoice;
+                }
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+</body>
+</html>
